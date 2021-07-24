@@ -18,14 +18,23 @@ const Home = ({ userObj }) => {
   }, []);
   const onSubmit = async event => {
     event.preventDefault();
-    const fileRef = storageService.ref().child(`${userObj.uid}/${uuidV4()}`);
-    const response = await fileRef.putString(attachment, "data_url");
-    // await dbService.collection("nweets").add({
-    //   text: nweet,
-    //   createAt: Date.now(),
-    //   creatorId: userObj.uid
-    // });
-    // setNweet("");
+    let attachmentUrl = "";
+    if(attachment != ""){
+      const attachementRef = storageService
+        .ref()
+        .child(`${userObj.uid}/${uuidV4()}`);
+      const response = await attachementRef.putString(attachment, "data_url");
+      attachmentUrl = await response.ref.getDownloadURL();
+    } 
+    const nweetObj = {
+      text: nweet,
+      createAt: Date.now(),  
+      creatorId: userObj.uid,
+      attachmentUrl
+    };
+    await dbService.collection("nweets").add(nweetObj);
+    setNweet("");
+    setAttachment("");
   };
   const onChange = event => {
     const {
