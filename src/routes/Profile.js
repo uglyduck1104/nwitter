@@ -2,11 +2,11 @@ import { authService } from "fbase";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 
-export default ({ userObj }) => {
+export default ({ refreshUser, userObj }) => {
   const history = useHistory();
   const [newDisplayName, setNewDisplayName] = useState(userObj.displayName)
   const onLogOutClick = () => {
-    authService.signOut()
+    authService.signOut();
     history.push("/");
   };
   const onChange = (event) => {
@@ -20,7 +20,8 @@ export default ({ userObj }) => {
     if(userObj.displayName !== newDisplayName){
       await userObj.updateProfile({
         displayName: newDisplayName,
-      })
+      });
+      refreshUser();
     }
   }
   return (
